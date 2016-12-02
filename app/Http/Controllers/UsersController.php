@@ -31,6 +31,11 @@ class UsersController extends Controller {
         return view('user-list')->with('users',$users);
     }
     
+    public function getProviderList(){
+        $users = User::where('user_type','=',3)->get();
+        return view('provider-list')->with('users',$users);
+    }
+    
     public function getCreateUser() {
         return view('create-user');
     }

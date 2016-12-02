@@ -7,6 +7,9 @@
                         <a href="{{url('users/user-list')}}"><i class="fa fa-fw fa-user"></i> Clients</a>
                     </li>
                     <li>
+                        <a href="{{url('users/provider-list')}}"><i class="fa fa-users"></i> Service provider</a>
+                    </li>
+                    <li>
                         <a href="{{url('category/category-list')}}"><i class="fa fa-fw fa-cubes"></i> Categories</a>
                     </li>
                 </ul>
