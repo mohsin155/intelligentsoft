@@ -21,4 +21,5 @@ Route::controllers([
     'password' => 'Auth\PasswordController',
     'users' => 'UsersController',
     'category' => 'CategoryController',
+	'test'=>"CategoryController",
 ]);
