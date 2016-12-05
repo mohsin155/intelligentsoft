@@ -10,4 +10,5 @@ return [
     "department_created" => "Department created successfully",
     "unauthorize" => "You donot have the priviledge to access this page.",
     "task_created" => "Task created successfully",
+    "user_signup" => "Signup successfull",
 ];
