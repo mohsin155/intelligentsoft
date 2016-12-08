@@ -60,5 +60,43 @@ class ApiController extends ApiUtility {
         }
         return $this->renderJson(config('constants.status.success'), config('constants.status_code.ok'), $data, $message);
     }
+    
+    
+       public function postProfileUpdate() {
+        try {
+            $inputs = $this->jsonData;
+            $user = User::find($inputs['user_id']);
+            if(!empty($user)){
+                $user_data = array(
+                                    'first_name'=>$inputs['first_name'],
+                                    'last_name'=>$inputs['last_name'],
+                                    'address'=>$inputs['address'],
+                                    'latitude'=>$inputs['latitude'],
+                                    'longitude'=>$inputs['longitude']
+                                    );
+                if(!empty($inputs['password'])){
+                    $user_data['password'] = Utility::generatePassword($inputs['password']);
+                }
+                User::where('user_id','=',$user->user_id)->update($user_data);
+                
+                $data = $user;
+                $status = config('constants.status.success');
+                $status_code = config('constants.status_code.ok');
+                $message = trans('messages.user_signup');
+            }else{
+                  $data = false;
+                $status = config('constants.status.error');
+                $status_code = config('constants.status_code.ok');
+                $message = $validator->messages()->first();
+                
+            }
+            
+        } catch (Exception $ex) {
+            echo $e;
+            exit;
+        }
+        return $this->renderJson(config('constants.status.success'), config('constants.status_code.ok'), $data, $message);
+    }
+
 
 }

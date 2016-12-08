@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">
-                    <span>service Provider List</span>
+                    <span>Service Provider List</span>
                     <span>
                         <a href="{{url('users/create-user')}}">
                             <button type="button" class="btn btn-primary" style="float:right;">Add service Provider</button>
