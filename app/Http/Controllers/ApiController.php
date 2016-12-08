@@ -19,7 +19,7 @@ class ApiController extends ApiUtility {
         $this->jsonData = json_decode($request->getContent(),true);
     }
 
-    public function postTester() {
+    public function getTester() {
         try {
             return $this->renderJson(config('constants.status.success'), config('constants.status_code.ok'), FALSE, 'working');
         } catch (\Exception $e) {
@@ -58,7 +58,7 @@ class ApiController extends ApiUtility {
             echo $e;
             exit;
         }
-        return $this->renderJson(config('constants.status.success'), config('constants.status_code.ok'), $data, $message);
+        return $this->renderJson($status, $status_code, $data, $message);
     }
     
     
