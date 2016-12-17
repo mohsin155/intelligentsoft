@@ -39,7 +39,7 @@ class ApiController extends ApiUtility {
             );
             $validator = Validator::make($inputs, $rules);
             if ($validator->fails()) {
-                $data = false;
+                $data = "";
                 $status = config('constants.status.error');
                 $status_code = config('constants.status_code.ok');
                 $message = $validator->messages()->first();
@@ -72,22 +72,23 @@ class ApiController extends ApiUtility {
                                     'last_name'=>$inputs['last_name'],
                                     'address'=>$inputs['address'],
                                     'latitude'=>$inputs['latitude'],
-                                    'longitude'=>$inputs['longitude']
+                                    'longitude'=>$inputs['longitude'],
+                                    'mobile_number'=>$inputs['mobile_number']
                                     );
                 if(!empty($inputs['password'])){
                     $user_data['password'] = Utility::generatePassword($inputs['password']);
                 }
                 User::where('user_id','=',$user->user_id)->update($user_data);
-                
+                $user = User::find($user->user_id);
                 $data = $user;
                 $status = config('constants.status.success');
                 $status_code = config('constants.status_code.ok');
                 $message = trans('messages.user_signup');
             }else{
-                  $data = false;
+                $data = "";
                 $status = config('constants.status.error');
                 $status_code = config('constants.status_code.ok');
-                $message = $validator->messages()->first();
+                $message = "User does not exist";
                 
             }
             
@@ -95,8 +96,35 @@ class ApiController extends ApiUtility {
             echo $e;
             exit;
         }
-        return $this->renderJson(config('constants.status.success'), config('constants.status_code.ok'), $data, $message);
+        return $this->renderJson($status, $status_code, $data, $message);
     }
 
+    
+    public function postUpdateProvider(){
+        try{
+            $inputs = $this->jsonData;
+            $rules = array('category'=>'required','user_id'=>'required|exists:users,user_id','description'=>'required');
+            $validator = Validator::make($inputs, $rules);
+            if ($validator->fails()) {
+                $data = "";
+                $status = config('constants.status.error');
+                $status_code = config('constants.status_code.ok');
+                $message = $validator->messages()->first();
+            }else{
+                $provider = User::find($inputs['user_id']);
+                $provider->category = $inputs['category'];
+                $provider->description = $inputs['description'];
+                $provider->save();
+                $data = $provider;
+                $status = config('constants.status.success');
+                $status_code = config('constants.status_code.ok');
+                $message = trans('messages.user_signup');
+            }
+        } catch (Exception $ex) {
+            echo $e;
+            exit;
+        }
+        return $this->renderJson($status, $status_code, $data, $message);
+    } 
 
 }
