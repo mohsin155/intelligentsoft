@@ -8,15 +8,15 @@ use Illuminate\Support\Facades\Request;
 use App\Models\User;
 use App\Utility\Utility;
 
-
 class ApiController extends ApiUtility {
 
     public $jsonData;
+
     public function __construct() {
         $this->middleware('App\Http\Middleware\ValidateJson');
         parent::__construct();
         $request = Request::instance();
-        $this->jsonData = json_decode($request->getContent(),true);
+        $this->jsonData = json_decode($request->getContent(), true);
     }
 
     public function getTester() {
@@ -43,10 +43,10 @@ class ApiController extends ApiUtility {
                 $status = config('constants.status.error');
                 $status_code = config('constants.status_code.ok');
                 $message = $validator->messages()->first();
-            }else{
-                $user_data = array('user_name'=>$inputs['username'],'email'=>$inputs['email'],'user_type'=>$inputs['user_type'],
-                        'password'=>Utility::generatePassword($inputs['password']));
-                $status = $inputs['user_type']==2?1:0;
+            } else {
+                $user_data = array('user_name' => $inputs['username'], 'email' => $inputs['email'], 'user_type' => $inputs['user_type'],
+                    'password' => Utility::generatePassword($inputs['password']));
+                $status = $inputs['user_type'] == 2 ? 1 : 0;
                 $user_data['status'] = $status;
                 $user_id = User::insertGetId($user_data);
                 $data = User::find($user_id);
@@ -60,38 +60,35 @@ class ApiController extends ApiUtility {
         }
         return $this->renderJson($status, $status_code, $data, $message);
     }
-    
-    
-       public function postProfileUpdate() {
+
+    public function postProfileUpdate() {
         try {
             $inputs = $this->jsonData;
             $user = User::find($inputs['user_id']);
-            if(!empty($user)){
+            if (!empty($user)) {
                 $user_data = array(
-                                    'first_name'=>$inputs['first_name'],
-                                    'last_name'=>$inputs['last_name'],
-                                    'address'=>$inputs['address'],
-                                    'latitude'=>$inputs['latitude'],
-                                    'longitude'=>$inputs['longitude'],
-                                    'mobile_number'=>$inputs['mobile_number']
-                                    );
-                if(!empty($inputs['password'])){
+                    'first_name' => $inputs['first_name'],
+                    'last_name' => $inputs['last_name'],
+                    'address' => $inputs['address'],
+                    'latitude' => $inputs['latitude'],
+                    'longitude' => $inputs['longitude'],
+                    'mobile_number' => $inputs['mobile_number']
+                );
+                if (!empty($inputs['password'])) {
                     $user_data['password'] = Utility::generatePassword($inputs['password']);
                 }
-                User::where('user_id','=',$user->user_id)->update($user_data);
+                User::where('user_id', '=', $user->user_id)->update($user_data);
                 $user = User::find($user->user_id);
                 $data = $user;
                 $status = config('constants.status.success');
                 $status_code = config('constants.status_code.ok');
                 $message = trans('messages.user_signup');
-            }else{
+            } else {
                 $data = "";
                 $status = config('constants.status.error');
                 $status_code = config('constants.status_code.ok');
                 $message = "User does not exist";
-                
             }
-            
         } catch (Exception $ex) {
             echo $e;
             exit;
@@ -99,18 +96,17 @@ class ApiController extends ApiUtility {
         return $this->renderJson($status, $status_code, $data, $message);
     }
 
-    
-    public function postUpdateProvider(){
-        try{
+    public function postUpdateProvider() {
+        try {
             $inputs = $this->jsonData;
-            $rules = array('category'=>'required','user_id'=>'required|exists:users,user_id','description'=>'required');
+            $rules = array('category' => 'required', 'user_id' => 'required|exists:users,user_id', 'description' => 'required');
             $validator = Validator::make($inputs, $rules);
             if ($validator->fails()) {
                 $data = "";
                 $status = config('constants.status.error');
                 $status_code = config('constants.status_code.ok');
                 $message = $validator->messages()->first();
-            }else{
+            } else {
                 $provider = User::find($inputs['user_id']);
                 $provider->category = $inputs['category'];
                 $provider->description = $inputs['description'];
@@ -124,7 +120,21 @@ class ApiController extends ApiUtility {
             echo $e;
             exit;
         }
+    }
+
+    public function getPageList() {
+        try {
+
+
+            $data = \App\Models\Page::all();
+            $status = config('constants.status.success');
+            $status_code = config('constants.status_code.ok');
+            $message = trans('messages.pagelist');
+        } catch (Exception $ex) {
+            echo $e;
+            exit;
+        }
         return $this->renderJson($status, $status_code, $data, $message);
-    } 
+    }
 
 }

@@ -20,7 +20,8 @@ Route::controllers([
     'auth' => 'Auth\AuthController',
     'password' => 'Auth\PasswordController',
     'users' => 'UsersController',
+    'provider' => 'ProviderController',
     'category' => 'CategoryController',
-    'api' => 'ApiController',
-    'provider' => 'UsersController'
+    'page' => 'PageController',
+    'api' => 'ApiController',   
 ]);
