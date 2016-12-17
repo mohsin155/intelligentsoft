@@ -8,10 +8,10 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">
-                    <span>Service Provider List</span>
+                    <span>Page List</span>
                     <span>
-                        <a href="{{url('provider/create-provider')}}">
-                            <button type="button" class="btn btn-primary" style="float:right;">Add service Provider</button>
+                        <a href="{{url('page/create-page')}}">
+                            <button type="button" class="btn btn-primary" style="float:right;">Add Page</button>
                         </a>
                     </span>
                 </h1>
@@ -39,25 +39,19 @@
                     <table id="list-table" class="table table-bordered table-hover table-striped">
                         <thead>
                             <tr>
-                                <th>User Id</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>User Type</th>
-                                <th>Status</th>
+                                <th>Page Id</th>
+                                <th>Page title</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if(count($users)>0)
-                            @foreach($users as $user)
+                            @if(count($pages)>0)
+                            @foreach($pages as $page)
                             <tr>
-                                <td>{{$user->user_id}}</td>
-                                <td>{{$user->first_name}}</td>
-                                <td>{{$user->email}}</td>
-                                <td>{{$user->user_type==3?'Provider':'Client'}}</td>
-                                <td>{{$user->status==0?'Inactive':'Active'}}</td>
-                                <td><a href="{{url('provider/update-provider')}}/{{$user->user_id}}" class="glyphicon glyphicon-edit"></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                    <a href="{{url('provider/delete')}}/{{$user->user_id}}" class="glyphicon glyphicon-trash"></a></td>
+                                <td>{{$page->page_id}}</td>
+                                <td>{{$page->title}}</td>
+                                <td><a href="{{url('page/update-page')}}/{{$page->page_id}}" class="glyphicon glyphicon-edit"></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                    <a href="{{url('page/delete')}}/{{$page->page_id}}" class="glyphicon glyphicon-trash"></a></td>
                             </tr>
                             @endforeach
                             @endif

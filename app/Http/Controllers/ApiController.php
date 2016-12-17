@@ -98,5 +98,20 @@ class ApiController extends ApiUtility {
         return $this->renderJson(config('constants.status.success'), config('constants.status_code.ok'), $data, $message);
     }
 
-
+    public function getPageList() {
+        try {
+                          
+               
+                $data = \App\Models\Page::all();
+                $status = config('constants.status.success');
+                $status_code = config('constants.status_code.ok');
+                $message = trans('messages.pagelist');
+            
+        } catch (Exception $ex) {
+            echo $e;
+            exit;
+        }
+        return $this->renderJson($status, $status_code, $data, $message);
+    }
+    
 }

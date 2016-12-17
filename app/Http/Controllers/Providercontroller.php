@@ -14,42 +14,42 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use App\Models\Departments;
 
-class UsersController extends Controller {
+class ProviderController extends Controller {
 
     public function __construct() {
         $this->middleware('auth', ['except' => ['getLogin', 'postLogin']]);
     }
 
     public function getDashboard() {
-        $clients = User::where('user_type','=',2)->count();
+      
         $provider = User::where('user_type','=',3)->count();
-        return view('dashboard')->with('clients',$clients)->with('provider',$provider);
+        return view('dashboard')->with('provider',$provider);
     }
 
-    public function getUserList(){
-        $users = User::where('user_type','=',2)->get();
-        return view('user-list')->with('users',$users);
+    public function getProviderList(){
+        $users = User::where('user_type','=',3)->get();
+        return view('provider-list')->with('users',$users);
     }
     
     
     
-    public function getCreateUser() {
-        return view('create-user');
+    public function getCreateProvider() {
+        return view('create-provider');
     }
     
     public function getChangePassword(){
         return view('change-password');
     }
     
-    public function getUpdateUser(Request $request,$id) {
+    public function getUpdateProvider(Request $request,$id) {
         $user_obj = new User();
         //dd($user);exit;
         $user = $user_obj->getUserDetail($id);
         //dd($user->first_name);
         if(is_object($user)){
-            return view('create-user')->with('user',$user);
+            return view('create-provider')->with('user',$user);
         }else{
-            return Redirect::to('users/create-user');
+            return Redirect::to('provider/create-provider');
         }
         
     }
@@ -81,7 +81,7 @@ class UsersController extends Controller {
         }
     }
 
-    public function postCreateUser() {
+    public function postCreateProvider() {
         $user = new User();
         $inputs = Input::all();
         $rules = array(
@@ -93,14 +93,14 @@ class UsersController extends Controller {
         $validator = Validator::make($inputs, $rules);
         if ($validator->fails()) {
             //dd($validator->errors()->all());exit;
-            return Redirect::to('users/create-user')->with('errors', $validator->errors()->all())->withInput();
+            return Redirect::to('provider/create-provider')->with('errors', $validator->errors()->all())->withInput();
         } else {
             $user->processUser($inputs);
-            return Redirect::to('users/create-user')->with('success', 'User created successfully!!!');
+            return Redirect::to('provider/create-provider')->with('success', 'User created successfully!!!');
         }
     }
 
-    public function postUpdateUser($id) {
+    public function postUpdateProvider($id) {
         $user = User::find($id);
         $inputs = Input::all();
         $rules = array(
@@ -111,19 +111,19 @@ class UsersController extends Controller {
         $validator = Validator::make($inputs, $rules);
         if ($validator->fails()) {
             //dd($validator->errors()->all());exit;
-            return Redirect::to('users/update-user/'.$id)->with('errors', $validator->errors()->all())->withInput();
+            return Redirect::to('provider/update-provider/'.$id)->with('errors', $validator->errors()->all())->withInput();
         } else {
-            $email_ver = User::select('user_id')->where('email', '=', $inputs['email'])->where('user_id', '<>', $id)->first();
+            $email_ver = User::select('user_id')->where('email', '=', $inputs['email'])->where('user_id', '<>', $idd)->first();
             if(is_object($email_ver)){
                 $errors[] = 'Email already exist'; 
-                return Redirect::to('users/update-user/'.$id)->with('errors',$errors)->withInput();
+                return Redirect::to('provider/update-provider/'.$id)->with('errors',$errors)->withInput();
 //            }elseif(!Hash::check($inputs['old_password'], $user->password)){
 //                $errors[] = 'Old Password is incorrect'; 
 //                return Redirect::to('users/update-user/'.$id)->with('errors',$errors)->withInput();
 //            }else{
             }else{
                 $user->processUser($inputs,$id);
-                return Redirect::to('users/update-user/'.$id)->with('success', 'User updated successfully!!!');
+                return Redirect::to('provider/update-provider/'.$id)->with('success', 'User updated successfully!!!');
             }
         }
     }
@@ -141,7 +141,7 @@ class UsersController extends Controller {
         );
         $validator = Validator::make($inputs, $rules);
         if ($validator->fails()) {
-             return Redirect::to('users/change-password/'.$id)->with('errors', $validator->errors()->all())->withInput();
+             return Redirect::to('provider/change-password/'.$id)->with('errors', $validator->errors()->all())->withInput();
         } else {
             $auth_user = Auth::User();
             if (!Hash::check($inputs['old_password'], $auth_user->password)) {
@@ -168,7 +168,7 @@ class UsersController extends Controller {
     
     public function getDelete($id){
         User::destroy($id);
-        return Redirect::to('users/user-list')->with('success',trans('messages.user_deleted'));
+        return Redirect::to('provider/provider-list')->with('success',trans('messages.user_deleted'));
     }
     
 
