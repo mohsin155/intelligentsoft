@@ -30,7 +30,7 @@
                     </ul>
                 </div>
                 @endif
-                <form role="form" method="post" action="{{isset($page)?url('page/update-page'):url('page/create-page')}}">
+                <form role="form" method="post" action="{{isset($page)?url('page/update-page/'.$page->page_id):url('page/create-page')}}">
           <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                     <div class="form-group">
                         <label>Page title</label>

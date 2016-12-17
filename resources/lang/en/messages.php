@@ -11,4 +11,5 @@ return [
     "unauthorize" => "You donot have the priviledge to access this page.",
     "task_created" => "Task created successfully",
     "user_signup" => "Signup successfull",
+    "pagelist" => "List of pages",
 ];

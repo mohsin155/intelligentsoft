@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Request;
 use App\Models\User;
 use App\Utility\Utility;
+use Illuminate\Support\Facades\Hash;
+use App\Models\ProviderDetails;
 
 class ApiController extends ApiUtility {
 
@@ -99,7 +101,7 @@ class ApiController extends ApiUtility {
     public function postUpdateProvider() {
         try {
             $inputs = $this->jsonData;
-            $rules = array('category' => 'required', 'user_id' => 'required|exists:users,user_id', 'description' => 'required');
+            $rules = array('category_id' => 'required', 'user_id' => 'required|exists:users,user_id', 'description' => 'required');
             $validator = Validator::make($inputs, $rules);
             if ($validator->fails()) {
                 $data = "";
@@ -107,29 +109,132 @@ class ApiController extends ApiUtility {
                 $status_code = config('constants.status_code.ok');
                 $message = $validator->messages()->first();
             } else {
-                $provider = User::find($inputs['user_id']);
-                $provider->category = $inputs['category'];
-                $provider->description = $inputs['description'];
+                $provider = ProviderDetails::updateOrCreate(['user_id' => $inputs['user_id']], ['category_id' => $inputs['category_id'], 'user_id' => $inputs['user_id'], 'description' => $inputs['description']]);
                 $provider->save();
+                $provider = ProviderDetails::where('user_id', $inputs['user_id'])->first();
                 $data = $provider;
                 $status = config('constants.status.success');
                 $status_code = config('constants.status_code.ok');
-                $message = trans('messages.user_signup');
+                $message = 'Details updated.';
             }
         } catch (Exception $ex) {
             echo $e;
             exit;
         }
+        return $this->renderJson($status, $status_code, $data, $message);
     }
 
-    public function getPageList() {
+    public function postPageList() {
         try {
-
-
             $data = \App\Models\Page::all();
+            if (empty($data)) {
+                $data = "";
+            }
             $status = config('constants.status.success');
             $status_code = config('constants.status_code.ok');
             $message = trans('messages.pagelist');
+        } catch (Exception $ex) {
+            echo $e;
+            exit;
+        }
+        return $this->renderJson($status, $status_code, $data, $message);
+    }
+
+    public function postLogin() {
+        try {
+            $inputs = $this->jsonData;
+            $rules = array('email' => 'required|exists:users,email,status,1', 'password' => 'required');
+            $validator = Validator::make($inputs, $rules);
+            if ($validator->fails()) {
+                $data = "";
+                $status = config('constants.status.error');
+                $status_code = config('constants.status_code.ok');
+                $message = $validator->messages()->first();
+            } else {
+                $user = User::where("email", $inputs['email'])->first();
+                if (!Hash::check($inputs['password'], $user->password)) {
+                    $data = "";
+                    $status = config('constants.status.error');
+                    $status_code = config('constants.status_code.ok');
+                    $message = "Incorrect password";
+                } else {
+                    $data = $user;
+                    $status = config('constants.status.success');
+                    $status_code = config('constants.status_code.ok');
+                    $message = "Login Successfull";
+                }
+            }
+        } catch (Exception $ex) {
+            echo $e;
+            exit;
+        }
+        return $this->renderJson($status, $status_code, $data, $message);
+    }
+
+    public function postProviderDetails() {
+        try {
+            $inputs = $this->jsonData;
+            $rules = array('user_id' => 'required|exists:users,user_id,user_type,3');
+            $validator = Validator::make($inputs, $rules);
+            if ($validator->fails()) {
+                $data = "";
+                $status = config('constants.status.error');
+                $status_code = config('constants.status_code.ok');
+                $message = $validator->messages()->first();
+            } else {
+                $provider = ProviderDetails::where('user_id',$inputs['user_id'])->first();
+                if (empty($provider)) {
+                    $data = "";
+                } else {
+                    $data = $provider;
+                }
+                $status = config('constants.status.success');
+                $status_code = config('constants.status_code.ok');
+                $message = 'Successfull';
+            }
+        } catch (Exception $ex) {
+            echo $e;
+            exit;
+        }
+        return $this->renderJson($status, $status_code, $data, $message);
+    }
+
+    public function postCategory() {
+        try {
+            $data = \App\Models\Category::all();
+            if (empty($data)) {
+                $data = "";
+            }
+            $status = config('constants.status.success');
+            $status_code = config('constants.status_code.ok');
+            $message = 'Category List';
+        } catch (Exception $ex) {
+            echo $e;
+            exit;
+        }
+        return $this->renderJson($status, $status_code, $data, $message);
+    }
+
+    public function postProvidersList() {
+        try {
+            $inputs = $this->jsonData;
+            $rules = array('category_id' => 'required');
+            $validator = Validator::make($inputs, $rules);
+            if ($validator->fails()) {
+                $data = "";
+                $status = config('constants.status.error');
+                $status_code = config('constants.status_code.ok');
+                $message = $validator->messages()->first();
+            } else {
+                $providers = new ProviderDetails();
+                $data = $providers->getProvidersList($inputs['category_id']);
+                if (empty($data)) {
+                    $data = "";
+                }
+                $status = config('constants.status.success');
+                $status_code = config('constants.status_code.ok');
+                $message = "Category List";
+            }
         } catch (Exception $ex) {
             echo $e;
             exit;
